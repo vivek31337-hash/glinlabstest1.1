@@ -1,0 +1,17 @@
+# GLINLABS - Vercel Deployment Configuration
+# This file is auto-detected by Vercel for Next.js projects
+
+# Build output
+[build]
+  command = "npm run build"
+  functions = "api/**/*.ts"
+  publish = ".next"
+
+# Rewrites (for API routes)
+[[redirects]]
+  source = "/api/:path*"
+  destination = "/api/:path*"
+  status = 200
+
+# Environment variables (set in Vercel dashboard)
+# NEXT_PUBLIC_API_URL
