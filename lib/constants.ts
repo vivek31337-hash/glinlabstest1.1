@@ -151,6 +151,7 @@ export const POINTS_CONFIG = {
   NORMAL_QUESTION: 5,
   LOW_QUALITY_QUESTION: -3,
   INITIAL_POINTS: 50,
+  MAX_HISTORY_REASON_LENGTH: 50,
 };
 
 // Question Quality Keywords

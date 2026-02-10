@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LLM_MODELS } from '@/lib/constants';
+import { LLM_MODELS, POINTS_CONFIG } from '@/lib/constants';
 import { 
   evaluateQuestionQuality, 
   calculatePoints, 
@@ -72,9 +72,10 @@ export default function GlinAI() {
     
     // Save to history
     const history = getPointsHistory();
+    const maxLength = POINTS_CONFIG.MAX_HISTORY_REASON_LENGTH;
     history.push({
       amount: pointsChange,
-      reason: userMessage.substring(0, 50) + (userMessage.length > 50 ? '...' : ''),
+      reason: userMessage.substring(0, maxLength) + (userMessage.length > maxLength ? '...' : ''),
       timestamp: new Date(),
       questionQuality: quality
     });

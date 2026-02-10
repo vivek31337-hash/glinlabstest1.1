@@ -9,9 +9,10 @@ import type { LLMModel } from './types';
 export function evaluateQuestionQuality(question: string): 'interesting' | 'normal' | 'low-quality' {
   const lowerQuestion = question.toLowerCase().trim();
   
-  // Check for low-quality indicators
+  // Check for low-quality indicators (must be standalone words)
+  const words = lowerQuestion.split(/\s+/);
   const hasLowQualityIndicators = QUALITY_INDICATORS.LOW.some(
-    indicator => lowerQuestion === indicator || lowerQuestion.split(' ').includes(indicator)
+    indicator => words.includes(indicator) || lowerQuestion === indicator
   );
   
   if (hasLowQualityIndicators || lowerQuestion.length < 10) {
@@ -25,7 +26,7 @@ export function evaluateQuestionQuality(question: string): 'interesting' | 'norm
   
   // Check for question marks and complexity
   const hasQuestionMark = lowerQuestion.includes('?');
-  const wordCount = lowerQuestion.split(/\s+/).length;
+  const wordCount = words.length;
   const hasComplexity = wordCount > 8;
   
   if (highQualityCount >= 2 || (highQualityCount >= 1 && hasQuestionMark && hasComplexity)) {
@@ -173,7 +174,12 @@ export function getPointsHistory(): Array<{
   
   try {
     const history = JSON.parse(stored);
-    return history.map((item: any) => ({
+    return history.map((item: {
+      amount: number;
+      reason: string;
+      timestamp: string | Date;
+      questionQuality: 'interesting' | 'normal' | 'low-quality';
+    }) => ({
       ...item,
       timestamp: new Date(item.timestamp)
     }));
