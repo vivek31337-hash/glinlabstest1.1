@@ -2,6 +2,20 @@
 
 import { useState, useEffect } from 'react';
 
+// Interesting security questions for background display
+const INTERESTING_QUESTIONS = [
+  "How can I secure my API endpoints against unauthorized access?",
+  "What are the best practices for password management?",
+  "How do I protect my web application from XSS attacks?",
+  "What is zero-trust security architecture?",
+  "How can I implement multi-factor authentication?",
+  "What are the latest trends in cloud security?",
+  "How do I conduct a security audit for my application?",
+  "What is the difference between encryption and hashing?",
+  "How can I prevent SQL injection vulnerabilities?",
+  "What are the key principles of secure coding?",
+];
+
 export default function GlinAI() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
     {
@@ -13,28 +27,14 @@ export default function GlinAI() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // Interesting security questions for background display
-  const interestingQuestions = [
-    "How can I secure my API endpoints against unauthorized access?",
-    "What are the best practices for password management?",
-    "How do I protect my web application from XSS attacks?",
-    "What is zero-trust security architecture?",
-    "How can I implement multi-factor authentication?",
-    "What are the latest trends in cloud security?",
-    "How do I conduct a security audit for my application?",
-    "What is the difference between encryption and hashing?",
-    "How can I prevent SQL injection vulnerabilities?",
-    "What are the key principles of secure coding?",
-  ];
-
   // Rotate questions every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentQuestionIndex((prev) => (prev + 1) % interestingQuestions.length);
+      setCurrentQuestionIndex((prev) => (prev + 1) % INTERESTING_QUESTIONS.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [interestingQuestions.length]);
+  }, []); // Empty dependency array - INTERESTING_QUESTIONS is a constant outside component
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,18 +84,11 @@ export default function GlinAI() {
         <div className="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col h-[600px] relative">
           
           {/* Background Rotating Questions */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden" aria-hidden="true">
             <div className="text-center px-8 max-w-2xl">
-              {interestingQuestions.map((question, idx) => (
-                <p
-                  key={idx}
-                  className={`text-2xl md:text-3xl font-light text-gray-300 transition-opacity duration-1000 absolute inset-0 flex items-center justify-center px-8 ${
-                    idx === currentQuestionIndex ? 'opacity-20' : 'opacity-0'
-                  }`}
-                >
-                  {question}
-                </p>
-              ))}
+              <p className="text-2xl md:text-3xl font-light text-gray-300 opacity-20 transition-opacity duration-1000">
+                {INTERESTING_QUESTIONS[currentQuestionIndex]}
+              </p>
             </div>
           </div>
           
