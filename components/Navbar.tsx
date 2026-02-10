@@ -15,7 +15,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity duration-300">
             <Image 
               src="/images/glin-logo.svg" 
-              alt="Glin AI Logo" 
+              alt="GLIN LABS Logo" 
               width={180} 
               height={40}
               className="h-8 w-auto md:h-10"
