@@ -32,6 +32,12 @@ export default function Home() {
             >
               GlinAI
             </Link>
+            <Link 
+              href="/glinai/knowledge"
+              className="px-8 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition duration-300"
+            >
+              🧠 Glin AI Knowledge
+            </Link>
           </div>
 
           {/* Features */}

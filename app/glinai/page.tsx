@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function GlinAI() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
@@ -47,6 +48,14 @@ export default function GlinAI() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">GlinAI</h1>
           <p className="text-xl text-gray-600">Your AI-powered security assistant</p>
           <p className="text-gray-500 mt-2">Powered by open-source security AI</p>
+          <div className="mt-4">
+            <Link 
+              href="/glinai/knowledge"
+              className="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition duration-300"
+            >
+              🧠 Try Knowledge Base (Earn Points!)
+            </Link>
+          </div>
         </div>
       </section>
 
