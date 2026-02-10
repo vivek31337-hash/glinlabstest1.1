@@ -17,8 +17,10 @@ export default function GlinAI() {
 
   // Handle Escape key to close modal
   useEffect(() => {
+    if (!showPremiumModal) return;
+    
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showPremiumModal) {
+      if (e.key === 'Escape') {
         setShowPremiumModal(false);
       }
     };
@@ -66,12 +68,16 @@ export default function GlinAI() {
     <div className="w-full">
       {/* Premium Feature Modal */}
       {showPremiumModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4"
+          onClick={() => setShowPremiumModal(false)}
+        >
           <div 
             className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="premium-modal-title"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
