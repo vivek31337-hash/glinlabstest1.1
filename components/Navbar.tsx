@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Navbar() {
@@ -12,11 +13,18 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-blue-600">GLINLABS</span>
+            <Image 
+              src="/images/glinlabs-logo.svg" 
+              alt="GLINLABS Logo" 
+              width={150} 
+              height={45}
+              className="h-10 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             <Link href="/" className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium">
               Home
             </Link>
@@ -32,6 +40,9 @@ export default function Navbar() {
             <Link href="/pricing" className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium">
               Pricing
             </Link>
+            <a href="mailto:support@glinlabs.com" className="text-gray-700 hover:text-blue-600 transition duration-300 font-medium">
+              Contact
+            </a>
             <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
               Login
             </Link>
@@ -66,6 +77,9 @@ export default function Navbar() {
             <Link href="/pricing" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition duration-300">
               Pricing
             </Link>
+            <a href="mailto:support@glinlabs.com" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition duration-300">
+              Contact
+            </a>
             <Link href="/login" className="block px-4 py-2 bg-blue-600 text-white rounded transition duration-300 text-center font-medium">
               Login
             </Link>

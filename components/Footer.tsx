@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,8 +10,19 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-2xl font-bold text-blue-400 mb-2">GLINLABS</h3>
-            <p className="text-gray-400">AI-Powered Security Intelligence for Everyone</p>
+            <Link href="/" className="inline-block mb-3">
+              <Image 
+                src="/images/glinlabs-logo.svg" 
+                alt="GLINLABS Logo" 
+                width={150} 
+                height={45}
+                className="h-10 w-auto brightness-0 invert"
+              />
+            </Link>
+            <p className="text-gray-400 mb-3">AI-Powered Security Intelligence for Everyone</p>
+            <a href="mailto:support@glinlabs.com" className="text-blue-400 hover:text-blue-300 transition duration-300">
+              support@glinlabs.com
+            </a>
           </div>
 
           {/* Quick Links */}
@@ -37,9 +49,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-blue-400 transition duration-300">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition duration-300">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition duration-300">Contact</a></li>
+              <li><Link href="/privacy-policy" className="hover:text-blue-400 transition duration-300">Privacy Policy</Link></li>
+              <li><Link href="/terms-and-conditions" className="hover:text-blue-400 transition duration-300">Terms and Conditions</Link></li>
+              <li><Link href="/cookies-policy" className="hover:text-blue-400 transition duration-300">Cookies Policy</Link></li>
+              <li><Link href="/disclaimer" className="hover:text-blue-400 transition duration-300">Disclaimer</Link></li>
             </ul>
           </div>
         </div>
