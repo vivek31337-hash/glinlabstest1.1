@@ -26,6 +26,26 @@ const POINTS_CRITERIA = {
   irrelevant: { min: -5, max: -2, description: 'Off-topic or irrelevant questions' },
 };
 
+// Points calculation constants
+const POINTS_CONFIG = {
+  SHORT_QUESTION: { min: 0, max: 2 },
+  MEDIUM_QUESTION: { min: 2, max: 5 },
+  LONG_QUESTION: { min: 4, max: 8 },
+  VERY_LONG_QUESTION: { min: 5, max: 10 },
+  SECURITY_BONUS: 2,
+  TECH_BONUS: 1,
+  QUESTION_MARK_BONUS: 1,
+  LOW_QUALITY_MIN: -1,
+  LOW_QUALITY_MAX: 0,
+  WORD_COUNT_THRESHOLDS: {
+    SHORT: 3,
+    MEDIUM: 8,
+    LONG: 20,
+  },
+  MIN_POINTS: -5,
+  MAX_POINTS: 10,
+};
+
 export default function KnowledgeBase() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -56,30 +76,35 @@ export default function KnowledgeBase() {
     let points = 0;
     
     // Length and structure
-    if (wordCount < 3) {
-      points = Math.floor(Math.random() * 3); // 0-2 points for very short questions
-    } else if (wordCount >= 3 && wordCount < 8) {
-      points = Math.floor(Math.random() * 4) + 2; // 2-5 points
-    } else if (wordCount >= 8 && wordCount < 20) {
-      points = Math.floor(Math.random() * 5) + 4; // 4-8 points
+    if (wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.SHORT) {
+      const range = POINTS_CONFIG.SHORT_QUESTION.max - POINTS_CONFIG.SHORT_QUESTION.min + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.SHORT_QUESTION.min;
+    } else if (wordCount >= POINTS_CONFIG.WORD_COUNT_THRESHOLDS.SHORT && wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.MEDIUM) {
+      const range = POINTS_CONFIG.MEDIUM_QUESTION.max - POINTS_CONFIG.MEDIUM_QUESTION.min + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.MEDIUM_QUESTION.min;
+    } else if (wordCount >= POINTS_CONFIG.WORD_COUNT_THRESHOLDS.MEDIUM && wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.LONG) {
+      const range = POINTS_CONFIG.LONG_QUESTION.max - POINTS_CONFIG.LONG_QUESTION.min + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.LONG_QUESTION.min;
     } else {
-      points = Math.floor(Math.random() * 6) + 5; // 5-10 points
+      const range = POINTS_CONFIG.VERY_LONG_QUESTION.max - POINTS_CONFIG.VERY_LONG_QUESTION.min + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.VERY_LONG_QUESTION.min;
     }
     
     // Bonus for relevant keywords
-    if (hasSecurityKeyword) points += 2;
-    if (hasTechKeyword) points += 1;
+    if (hasSecurityKeyword) points += POINTS_CONFIG.SECURITY_BONUS;
+    if (hasTechKeyword) points += POINTS_CONFIG.TECH_BONUS;
     
     // Bonus for question marks (proper questions)
-    if (question.includes('?')) points += 1;
+    if (question.includes('?')) points += POINTS_CONFIG.QUESTION_MARK_BONUS;
     
     // Check for common low-quality patterns
     if (/^(hi|hello|hey|test|ok|yes|no)$/i.test(question.trim())) {
-      points = Math.floor(Math.random() * 2) - 1; // -1 to 0 points
+      const range = POINTS_CONFIG.LOW_QUALITY_MAX - POINTS_CONFIG.LOW_QUALITY_MIN + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.LOW_QUALITY_MIN;
     }
     
     // Ensure points are within reasonable bounds
-    points = Math.max(-5, Math.min(10, points));
+    points = Math.max(POINTS_CONFIG.MIN_POINTS, Math.min(POINTS_CONFIG.MAX_POINTS, points));
     
     return points;
   };
@@ -170,7 +195,13 @@ export default function KnowledgeBase() {
           <p className="text-xl text-gray-200 mb-2">Ask questions, earn points, and learn!</p>
           <div className="flex items-center justify-center gap-2 text-lg">
             <span className="text-gray-300">Total Points:</span>
-            <span className={`font-bold text-3xl ${getPointsColor(totalPoints)}`}>{totalPoints}</span>
+            <span className={`font-bold text-3xl ${getPointsColor(totalPoints)}`}>
+              {totalPoints}
+              {totalPoints >= 7 && ' (Excellent)'}
+              {totalPoints >= 3 && totalPoints < 7 && ' (Good)'}
+              {totalPoints >= 0 && totalPoints < 3 && ' (Fair)'}
+              {totalPoints < 0 && ' (Needs Improvement)'}
+            </span>
           </div>
         </div>
       </section>
@@ -312,13 +343,14 @@ export default function KnowledgeBase() {
                 ))}
                 
                 {isLoading && (
-                  <div className="flex justify-start">
+                  <div className="flex justify-start" role="status" aria-live="polite" aria-busy="true">
                     <div className="bg-gray-200 text-gray-900 px-4 py-3 rounded-lg rounded-bl-none">
                       <div className="flex space-x-2">
                         <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                         <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
                       </div>
+                      <span className="sr-only">Loading response...</span>
                     </div>
                   </div>
                 )}
