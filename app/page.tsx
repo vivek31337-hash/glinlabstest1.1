@@ -13,6 +13,16 @@ export default function Home() {
             GLINLABS provides cutting-edge security consulting, advanced AI analysis, and powerful open-source intelligence tools to protect what matters most.
           </p>
           
+          {/* Prominent Glin AI Button */}
+          <div className="mb-8">
+            <Link 
+              href="/glinai"
+              className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transition duration-300 shadow-2xl transform hover:scale-105 animate-pulse"
+            >
+              🤖 Try Glin AI - Chat with Intelligence
+            </Link>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link 
               href="/services"
@@ -24,13 +34,7 @@ export default function Home() {
               href="/learn"
               className="px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition duration-300"
             >
-              Learn
-            </Link>
-            <Link 
-              href="/glinai"
-              className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition duration-300"
-            >
-              GlinAI
+              Learn More
             </Link>
           </div>
 
