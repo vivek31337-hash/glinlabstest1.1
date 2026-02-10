@@ -11,6 +11,7 @@ export default function GlinAI() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +40,46 @@ export default function GlinAI() {
     }, 800);
   };
 
+  const handlePremiumFeatureClick = () => {
+    setShowPremiumModal(true);
+  };
+
   return (
     <div className="w-full">
+      {/* Premium Feature Modal */}
+      {showPremiumModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Premium Feature</h3>
+              <p className="text-gray-600 mb-6">
+                Image uploads and voice input are coming soon as part of our premium features. 
+                Upgrade to unlock advanced capabilities!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => window.location.href = '/pricing'}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 font-semibold"
+                >
+                  View Pricing
+                </button>
+                <button
+                  onClick={() => setShowPremiumModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300 font-semibold"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero */}
       <section className="min-h-[300px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
         <div className="max-w-4xl mx-auto text-center">
@@ -88,7 +127,7 @@ export default function GlinAI() {
 
           {/* Input Area */}
           <div className="border-t border-gray-300 bg-white p-4">
-            <form onSubmit={handleSendMessage} className="flex gap-3">
+            <form onSubmit={handleSendMessage} className="flex gap-3 mb-3">
               <input
                 type="text"
                 placeholder="Ask me about security..."
@@ -105,7 +144,35 @@ export default function GlinAI() {
                 Send
               </button>
             </form>
-            <p className="text-xs text-gray-500 mt-3 text-center">
+            
+            {/* Premium Feature Buttons */}
+            <div className="flex gap-2 mb-3">
+              <button
+                type="button"
+                onClick={handlePremiumFeatureClick}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-300 text-sm font-medium border border-gray-300"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Image Upload</span>
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Premium</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={handlePremiumFeatureClick}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-300 text-sm font-medium border border-gray-300"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                <span>Voice Input</span>
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Premium</span>
+              </button>
+            </div>
+            
+            <p className="text-xs text-gray-500 text-center">
               💡 Tip: GlinAI provides general security guidance. For detailed analysis, contact our consulting team.
             </p>
           </div>
