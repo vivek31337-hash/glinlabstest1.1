@@ -17,7 +17,7 @@ export default function Home() {
           <div className="mb-8">
             <Link 
               href="/glinai"
-              className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transition duration-300 shadow-2xl transform hover:scale-105 animate-pulse"
+              className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-2xl font-bold text-xl transition duration-300 shadow-2xl transform hover:scale-105 motion-safe:animate-pulse"
             >
               🤖 Try Glin AI - Chat with Intelligence
             </Link>

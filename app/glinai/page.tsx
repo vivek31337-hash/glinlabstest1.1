@@ -14,6 +14,12 @@ type PointChange = {
   timestamp: number;
 };
 
+type QuestionEvaluation = {
+  quality: 'interesting' | 'normal' | 'low';
+  points: number;
+  reason: string;
+};
+
 const LLM_MODELS = [
   { id: 'gpt-3.5', name: 'GPT-3.5 Turbo', icon: '🤖' },
   { id: 'gemini', name: 'Google Gemini', icon: '✨' },
@@ -32,6 +38,11 @@ const INTERESTING_QUESTIONS = [
   "How does end-to-end encryption work?",
   "What is the role of ethical hacking in cybersecurity?",
 ];
+
+// Constants for timeouts and intervals
+const QUESTION_ROTATION_INTERVAL_MS = 5000;
+const NOTIFICATION_DURATION_MS = 3000;
+const RESPONSE_DELAY_MS = 1000;
 
 export default function GlinAI() {
   const [messages, setMessages] = useState<Message[]>([
@@ -53,19 +64,19 @@ export default function GlinAI() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuestion(prev => (prev + 1) % INTERESTING_QUESTIONS.length);
-    }, 5000);
+    }, QUESTION_ROTATION_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
 
   // Clear point change notification
   useEffect(() => {
     if (pointChange) {
-      const timeout = setTimeout(() => setPointChange(null), 3000);
+      const timeout = setTimeout(() => setPointChange(null), NOTIFICATION_DURATION_MS);
       return () => clearTimeout(timeout);
     }
   }, [pointChange]);
 
-  const evaluateQuestionQuality = (question: string): { quality: 'interesting' | 'normal' | 'low'; points: number; reason: string } => {
+  const evaluateQuestionQuality = (question: string): QuestionEvaluation => {
     const lowerQuestion = question.toLowerCase();
     const wordCount = question.split(' ').length;
     
@@ -123,7 +134,8 @@ export default function GlinAI() {
       ]
     };
 
-    const baseResponse = responses[quality as keyof typeof responses][Math.floor(Math.random() * responses[quality as keyof typeof responses].length)];
+    const responseArray = responses[quality as keyof typeof responses];
+    const baseResponse = responseArray[Math.floor(Math.random() * responseArray.length)];
     
     const detailedAnswers = [
       'In cybersecurity, this involves multiple layers of protection including network security, application security, and data encryption. Best practices include regular security audits, implementing zero-trust architecture, and staying updated with the latest threat intelligence.',
@@ -169,7 +181,7 @@ export default function GlinAI() {
         model: modelToUse 
       }]);
       setIsLoading(false);
-    }, 1000);
+    }, RESPONSE_DELAY_MS);
   };
 
   return (
@@ -281,7 +293,10 @@ export default function GlinAI() {
                   {msg.role === 'assistant' && msg.model && (
                     <div className="flex items-center gap-1 mb-1">
                       <span className="text-xs text-gray-500">
-                        {LLM_MODELS.find(m => m.id === msg.model)?.icon} {LLM_MODELS.find(m => m.id === msg.model)?.name}
+                        {(() => {
+                          const model = LLM_MODELS.find(m => m.id === msg.model);
+                          return model ? `${model.icon} ${model.name}` : '';
+                        })()}
                       </span>
                     </div>
                   )}
