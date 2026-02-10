@@ -25,6 +25,28 @@ export type Message = {
   role: 'user' | 'assistant';
   content: string;
   timestamp?: Date;
+  points?: number;
+  model?: string;
+};
+
+export type LLMModel = {
+  id: string;
+  name: string;
+  provider: string;
+  free: boolean;
+  description: string;
+};
+
+export type UserPoints = {
+  total: number;
+  history: PointsTransaction[];
+};
+
+export type PointsTransaction = {
+  amount: number;
+  reason: string;
+  timestamp: Date;
+  questionQuality: 'interesting' | 'normal' | 'low-quality';
 };
 
 export type FooterSection = {

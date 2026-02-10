@@ -1,52 +1,138 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { LLM_MODELS } from '@/lib/constants';
+import { 
+  evaluateQuestionQuality, 
+  calculatePoints, 
+  autoSelectModel,
+  callLLM,
+  getInitialPoints,
+  savePoints,
+  getPointsHistory,
+  savePointsHistory
+} from '@/lib/llm';
+import type { Message, LLMModel } from '@/lib/types';
 
 export default function GlinAI() {
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
+  const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Hello! I\'m GlinAI, your AI-powered security assistant. How can I help you today?'
+      content: '👋 Welcome to GlinAI! Ask me questions and earn reward points based on the quality of your questions. Interesting and detailed questions earn more points!',
+      timestamp: new Date(),
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [points, setPoints] = useState(0);
+  const [isAutoSelect, setIsAutoSelect] = useState(true);
+  const [selectedModel, setSelectedModel] = useState<LLMModel>(LLM_MODELS[0]);
+  const [lastPointsChange, setLastPointsChange] = useState<number | null>(null);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  // Load points from localStorage on mount
+  useEffect(() => {
+    setPoints(getInitialPoints());
+  }, []);
+
+  // Save points to localStorage when they change
+  useEffect(() => {
+    savePoints(points);
+  }, [points]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage = input.trim();
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    
+    // Evaluate question quality
+    const quality = evaluateQuestionQuality(userMessage);
+    const pointsChange = calculatePoints(quality);
+    
+    // Auto-select or use selected model
+    const modelToUse = isAutoSelect ? autoSelectModel(userMessage) : selectedModel;
+    
+    // Add user message
+    setMessages(prev => [...prev, { 
+      role: 'user', 
+      content: userMessage,
+      timestamp: new Date(),
+      points: pointsChange,
+      model: modelToUse.name
+    }]);
+    
     setInput('');
     setIsLoading(true);
+    setLastPointsChange(pointsChange);
 
-    // Simulate AI response after a delay
-    setTimeout(() => {
-      const responses = [
-        'That\'s an interesting security question. For more detailed assistance, please check out our Learn section for comprehensive guides.',
-        'I can help with that! GLINLABS offers specialized services to address security concerns. Visit our Services page to learn more.',
-        'Great question about cybersecurity! Our team of experts is ready to help. Would you like to explore our services?',
-        'That falls within our area of expertise. Feel free to reach out through our contact page to discuss your specific needs.',
-        'Security is our passion! For professional consultation, consider reaching out to our team for personalized guidance.'
-      ];
+    // Update points
+    const newPoints = points + pointsChange;
+    setPoints(newPoints);
+    
+    // Save to history
+    const history = getPointsHistory();
+    history.push({
+      amount: pointsChange,
+      reason: userMessage.substring(0, 50) + (userMessage.length > 50 ? '...' : ''),
+      timestamp: new Date(),
+      questionQuality: quality
+    });
+    savePointsHistory(history);
+
+    try {
+      // Call LLM API
+      const response = await callLLM(userMessage, modelToUse);
       
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      setMessages(prev => [...prev, { role: 'assistant', content: randomResponse }]);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: response,
+        timestamp: new Date(),
+        model: modelToUse.name
+      }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I apologize, but I encountered an error processing your question. Please try again.',
+        timestamp: new Date(),
+      }]);
+    } finally {
       setIsLoading(false);
-    }, 800);
+      // Clear points change indicator after 3 seconds
+      setTimeout(() => setLastPointsChange(null), 3000);
+    }
   };
 
   return (
     <div className="w-full">
-      {/* Hero */}
-      <section className="min-h-[300px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
+      {/* Hero with Points Display */}
+      <section className="min-h-[250px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">GlinAI</h1>
-          <p className="text-xl text-gray-600">Your AI-powered security assistant</p>
-          <p className="text-gray-500 mt-2">Powered by open-source security AI</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 text-slate-900">GlinAI</h1>
+          <p className="text-xl text-gray-600 mb-3">Ask Questions, Get Rewarded!</p>
+          
+          {/* Points Display */}
+          <div className="inline-flex items-center gap-4 bg-white rounded-full px-6 py-3 shadow-lg border-2 border-emerald-500">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🏆</span>
+              <div className="text-left">
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Your Points</p>
+                <p className="text-2xl font-bold text-emerald-600">{points}</p>
+              </div>
+            </div>
+            
+            {lastPointsChange !== null && (
+              <div className={`animate-bounce text-lg font-bold ${
+                lastPointsChange > 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {lastPointsChange > 0 ? '+' : ''}{lastPointsChange}
+              </div>
+            )}
+          </div>
+          
+          <p className="text-sm text-gray-500 mt-3">
+            💡 Interesting questions earn more points!
+          </p>
         </div>
       </section>
 
@@ -54,22 +140,85 @@ export default function GlinAI() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col h-[600px]">
           
+          {/* Model Selection Header */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 p-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">AI Model:</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isAutoSelect}
+                    onChange={(e) => setIsAutoSelect(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-600">Auto-Select</span>
+                </label>
+              </div>
+              
+              {!isAutoSelect && (
+                <select
+                  value={selectedModel.id}
+                  onChange={(e) => {
+                    const model = LLM_MODELS.find(m => m.id === e.target.value);
+                    if (model) setSelectedModel(model);
+                  }}
+                  className="flex-1 sm:flex-initial text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                  {LLM_MODELS.map(model => (
+                    <option key={model.id} value={model.id}>
+                      {model.name} ({model.provider})
+                    </option>
+                  ))}
+                </select>
+              )}
+              
+              {isAutoSelect && (
+                <span className="text-xs text-gray-500 italic">
+                  AI will auto-select the best model for your question
+                </span>
+              )}
+            </div>
+          </div>
+          
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-gray-50">
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={idx}>
                 <div
-                  className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
-                    msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none'
-                      : 'bg-gray-200 text-gray-900 rounded-bl-none'
-                  }`}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <p className="text-sm md:text-base break-words">{msg.content}</p>
+                  <div
+                    className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
+                      msg.role === 'user'
+                        ? 'bg-blue-600 text-white rounded-br-none'
+                        : 'bg-gray-200 text-gray-900 rounded-bl-none'
+                    }`}
+                  >
+                    <p className="text-sm md:text-base break-words">{msg.content}</p>
+                    
+                    {msg.model && (
+                      <p className={`text-xs mt-2 ${
+                        msg.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                      }`}>
+                        🤖 {msg.model}
+                      </p>
+                    )}
+                  </div>
                 </div>
+                
+                {msg.role === 'user' && msg.points !== undefined && (
+                  <div className={`flex justify-end mt-1`}>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded ${
+                      msg.points > 0 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-red-100 text-red-700'
+                    }`}>
+                      {msg.points > 0 ? `+${msg.points}` : msg.points} points
+                      {msg.points > 0 && msg.points >= 10 && ' 🌟'}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
             
@@ -91,7 +240,7 @@ export default function GlinAI() {
             <form onSubmit={handleSendMessage} className="flex gap-3">
               <input
                 type="text"
-                placeholder="Ask me about security..."
+                placeholder="Ask an interesting question to earn points..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
@@ -105,9 +254,12 @@ export default function GlinAI() {
                 Send
               </button>
             </form>
-            <p className="text-xs text-gray-500 mt-3 text-center">
-              💡 Tip: GlinAI provides general security guidance. For detailed analysis, contact our consulting team.
-            </p>
+            
+            <div className="mt-3 flex flex-col sm:flex-row gap-2 text-xs text-gray-500">
+              <span>💎 Interesting questions: +10 pts</span>
+              <span>📝 Normal questions: +5 pts</span>
+              <span>⚠️ Low quality: -3 pts</span>
+            </div>
           </div>
         </div>
       </section>
