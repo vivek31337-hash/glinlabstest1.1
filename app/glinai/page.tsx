@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function GlinAI() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
@@ -11,6 +11,30 @@ export default function GlinAI() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // Interesting security questions for background display
+  const interestingQuestions = [
+    "How can I secure my API endpoints against unauthorized access?",
+    "What are the best practices for password management?",
+    "How do I protect my web application from XSS attacks?",
+    "What is zero-trust security architecture?",
+    "How can I implement multi-factor authentication?",
+    "What are the latest trends in cloud security?",
+    "How do I conduct a security audit for my application?",
+    "What is the difference between encryption and hashing?",
+    "How can I prevent SQL injection vulnerabilities?",
+    "What are the key principles of secure coding?",
+  ];
+
+  // Rotate questions every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentQuestionIndex((prev) => (prev + 1) % interestingQuestions.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [interestingQuestions.length]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,20 +66,41 @@ export default function GlinAI() {
   return (
     <div className="w-full">
       {/* Hero */}
-      <section className="min-h-[300px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
+      <section className="min-h-[300px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8 relative">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">GlinAI</h1>
           <p className="text-xl text-gray-600">Your AI-powered security assistant</p>
           <p className="text-gray-500 mt-2">Powered by open-source security AI</p>
         </div>
+        
+        {/* Beta Version Label */}
+        <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+          Beta Version
+        </div>
       </section>
 
       {/* Chat Interface */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col h-[600px]">
+        <div className="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col h-[600px] relative">
+          
+          {/* Background Rotating Questions */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+            <div className="text-center px-8 max-w-2xl">
+              {interestingQuestions.map((question, idx) => (
+                <p
+                  key={idx}
+                  className={`text-2xl md:text-3xl font-light text-gray-300 transition-opacity duration-1000 absolute inset-0 flex items-center justify-center px-8 ${
+                    idx === currentQuestionIndex ? 'opacity-20' : 'opacity-0'
+                  }`}
+                >
+                  {question}
+                </p>
+              ))}
+            </div>
+          </div>
           
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-gray-50">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-gray-50 relative z-10">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
@@ -87,7 +132,7 @@ export default function GlinAI() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-300 bg-white p-4">
+          <div className="border-t border-gray-300 bg-white p-4 relative z-10">
             <form onSubmit={handleSendMessage} className="flex gap-3">
               <input
                 type="text"
