@@ -331,7 +331,7 @@ export default function KnowledgeBase() {
               <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-gray-50">
                 {messages.map((msg, idx) => (
                   <div
-                    key={idx}
+                    key={`${msg.role}-${msg.model ?? 'nomodel'}-${msg.pointsEarned ?? 'nopoints'}-${msg.content}`}
                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div className="max-w-xs lg:max-w-md xl:max-w-lg">
