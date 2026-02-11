@@ -83,7 +83,7 @@ export default function KnowledgeBase() {
     SHORT: 3,
     MEDIUM: 8,
     LONG: 20,
-  },
+  MIN_POINTS: -1,
   MIN_POINTS: -5,
   MAX_POINTS: 10,
 };
