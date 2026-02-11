@@ -65,7 +65,7 @@ export default function KnowledgeBase() {
   // Evaluate question quality and assign points
   const evaluateQuestion = (question: string): number => {
     const lowerQuestion = question.toLowerCase();
-    const wordCount = question.split(/\s+/).length;
+    const wordCount = question.trim().split(/\s+/).filter(word => word.length > 0).length;
     
     // Check for security/tech-related keywords
     const securityKeywords = ['security', 'vulnerability', 'threat', 'attack', 'protection', 'encryption', 'cybersecurity', 'malware', 'phishing', 'firewall', 'authentication', 'authorization'];
