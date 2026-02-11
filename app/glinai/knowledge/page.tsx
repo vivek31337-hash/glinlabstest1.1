@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, FormEvent } from 'react';
 import Link from 'next/link';
 
 interface Message {
@@ -8,6 +8,7 @@ interface Message {
   content: string;
   pointsEarned?: number;
   model?: string;
+  timestamp: number;
 }
 
 // Simulated LLM models for scoring/demo purposes only.
@@ -21,11 +22,10 @@ const LLM_MODELS = [
 ];
 
 const POINTS_CRITERIA = {
-  relevant: { min: 3, max: 5, description: 'Relevant and well-structured questions' },
-  interesting: { min: 6, max: 10, description: 'Interesting and thought-provoking questions' },
-  simple: { min: 0, max: 2, description: 'Simple or basic questions' },
-  unclear: { min: -1, max: 0, description: 'Unclear or poorly structured questions' },
-  irrelevant: { min: -1, max: 0, description: 'Off-topic or irrelevant questions' },
+  simple: { min: 0, max: 2, description: 'Simple or basic questions (< 3 words)' },
+  relevant: { min: 3, max: 5, description: 'Relevant questions (3-7 words)' },
+  interesting: { min: 6, max: 10, description: 'Interesting questions (8+ words with keywords)' },
+  lowquality: { min: -1, max: -1, description: 'Single-word greetings (hi, hello, hey, etc.)' },
 };
 
 // Points calculation constants
@@ -44,15 +44,20 @@ const POINTS_CONFIG = {
     MEDIUM: 8,
     LONG: 20,
   },
-  MIN_POINTS: -5,
+  MIN_POINTS: -1,
   MAX_POINTS: 10,
 };
+
+// Keyword arrays for scoring
+const SECURITY_KEYWORDS = ['security', 'vulnerability', 'threat', 'attack', 'protection', 'encryption', 'cybersecurity', 'malware', 'phishing', 'firewall', 'authentication', 'authorization'];
+const TECH_KEYWORDS = ['ai', 'machine learning', 'algorithm', 'code', 'programming', 'data', 'network', 'system', 'software', 'hardware'];
 
 export default function KnowledgeBase() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
       content: 'Welcome to Glin AI Knowledge Base! Ask me anything and earn points for quality questions. The better your question, the more points you earn!',
+      timestamp: Date.now(),
     },
   ]);
   const [input, setInput] = useState('');
@@ -61,35 +66,45 @@ export default function KnowledgeBase() {
   const [selectedModel, setSelectedModel] = useState<string>('auto');
   const [showModelSelector, setShowModelSelector] = useState(false);
   const [showPointsCriteria, setShowPointsCriteria] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // Evaluate question quality and assign points
   const evaluateQuestion = (question: string): number => {
     const lowerQuestion = question.toLowerCase();
-    const wordCount = question.trim().split(/\s+/).filter(word => word.length > 0).length;
+    const trimmedQuestion = question.trim();
+    const wordCount = trimmedQuestion.split(/\s+/).filter(word => word.length > 0).length;
+    
+    // Check for common low-quality patterns first (before calculating points)
+    if (/^(hi|hello|hey|test|ok|yes|no)$/i.test(trimmedQuestion)) {
+      // Low-quality single-word inputs always get -1 points
+      return POINTS_CONFIG.LOW_QUALITY_MIN;
+    }
     
     // Check for security/tech-related keywords
-    const securityKeywords = ['security', 'vulnerability', 'threat', 'attack', 'protection', 'encryption', 'cybersecurity', 'malware', 'phishing', 'firewall', 'authentication', 'authorization'];
-    const techKeywords = ['ai', 'machine learning', 'algorithm', 'code', 'programming', 'data', 'network', 'system', 'software', 'hardware'];
+    const hasSecurityKeyword = SECURITY_KEYWORDS.some(keyword => lowerQuestion.includes(keyword));
+    const hasTechKeyword = TECH_KEYWORDS.some(keyword => lowerQuestion.includes(keyword));
     
-    const hasSecurityKeyword = securityKeywords.some(keyword => lowerQuestion.includes(keyword));
-    const hasTechKeyword = techKeywords.some(keyword => lowerQuestion.includes(keyword));
-    
-    // Calculate points based on various factors
+    // Calculate base points based on word count (deterministic)
     let points = 0;
     
-    // Length and structure
+    // Length-based scoring (using midpoint of range for determinism)
     if (wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.SHORT) {
-      const range = POINTS_CONFIG.SHORT_QUESTION.max - POINTS_CONFIG.SHORT_QUESTION.min + 1;
-      points = Math.floor(Math.random() * range) + POINTS_CONFIG.SHORT_QUESTION.min;
+      points = Math.floor((POINTS_CONFIG.SHORT_QUESTION.min + POINTS_CONFIG.SHORT_QUESTION.max) / 2);
     } else if (wordCount >= POINTS_CONFIG.WORD_COUNT_THRESHOLDS.SHORT && wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.MEDIUM) {
-      const range = POINTS_CONFIG.MEDIUM_QUESTION.max - POINTS_CONFIG.MEDIUM_QUESTION.min + 1;
-      points = Math.floor(Math.random() * range) + POINTS_CONFIG.MEDIUM_QUESTION.min;
+      points = Math.floor((POINTS_CONFIG.MEDIUM_QUESTION.min + POINTS_CONFIG.MEDIUM_QUESTION.max) / 2);
     } else if (wordCount >= POINTS_CONFIG.WORD_COUNT_THRESHOLDS.MEDIUM && wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.LONG) {
-      const range = POINTS_CONFIG.LONG_QUESTION.max - POINTS_CONFIG.LONG_QUESTION.min + 1;
-      points = Math.floor(Math.random() * range) + POINTS_CONFIG.LONG_QUESTION.min;
+      points = Math.floor((POINTS_CONFIG.LONG_QUESTION.min + POINTS_CONFIG.LONG_QUESTION.max) / 2);
     } else {
-      const range = POINTS_CONFIG.VERY_LONG_QUESTION.max - POINTS_CONFIG.VERY_LONG_QUESTION.min + 1;
-      points = Math.floor(Math.random() * range) + POINTS_CONFIG.VERY_LONG_QUESTION.min;
+      points = Math.floor((POINTS_CONFIG.VERY_LONG_QUESTION.min + POINTS_CONFIG.VERY_LONG_QUESTION.max) / 2);
     }
     
     // Bonus for relevant keywords
@@ -98,14 +113,6 @@ export default function KnowledgeBase() {
     
     // Bonus for question marks (proper questions)
     if (question.includes('?')) points += POINTS_CONFIG.QUESTION_MARK_BONUS;
-    
-    // Check for common low-quality patterns
-    if (/^(hi|hello|hey|test|ok|yes|no)$/i.test(question.trim())) {
-      const range = POINTS_CONFIG.LOW_QUALITY_MAX - POINTS_CONFIG.LOW_QUALITY_MIN + 1;
-      const lowQualityPoints = Math.floor(Math.random() * range) + POINTS_CONFIG.LOW_QUALITY_MIN;
-      // Always normalize known low-quality patterns to the low-quality score range
-      points = lowQualityPoints;
-    }
     
     // Ensure points are within reasonable bounds
     points = Math.max(POINTS_CONFIG.MIN_POINTS, Math.min(POINTS_CONFIG.MAX_POINTS, points));
@@ -150,7 +157,7 @@ export default function KnowledgeBase() {
     return `[${modelName}] ${response}`;
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
@@ -164,22 +171,25 @@ export default function KnowledgeBase() {
       role: 'user', 
       content: userMessage, 
       pointsEarned,
-      model: modelToUse 
+      model: modelToUse,
+      timestamp: Date.now(),
     }]);
     
     setInput('');
     setIsLoading(true);
     setTotalPoints(prev => prev + pointsEarned);
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Simulate AI response with cleanup
+    timeoutRef.current = setTimeout(() => {
       const response = generateResponse(userMessage, modelToUse);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: response,
-        model: modelToUse 
+        model: modelToUse,
+        timestamp: Date.now(),
       }]);
       setIsLoading(false);
+      timeoutRef.current = null;
     }, 1000);
   };
 
@@ -329,9 +339,9 @@ export default function KnowledgeBase() {
               
               {/* Messages Container */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white to-gray-50">
-                {messages.map((msg, idx) => (
+                {messages.map((msg) => (
                   <div
-                    key={`${msg.role}-${msg.model ?? 'nomodel'}-${msg.pointsEarned ?? 'nopoints'}-${msg.content}`}
+                    key={msg.timestamp}
                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div className="max-w-xs lg:max-w-md xl:max-w-lg">

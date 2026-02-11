@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 
 export default function GlinAI() {
@@ -13,7 +13,7 @@ export default function GlinAI() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;

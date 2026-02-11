@@ -119,18 +119,19 @@ glinlabstest1/
   - Interesting questions: 6-10 points (🌟)
   - Relevant questions: 3-5 points (✨)
   - Simple questions: 0-2 points
-  - Unclear questions: -2 to 0 points (⚠️)
-  - Irrelevant questions: -5 to -2 points (⚠️)
-- **LLM Selection**: Choose from 5 top free models
-  - GPT (OpenAI) - General-purpose, highly capable
-  - Grok (xAI) - Real-time knowledge, witty
-  - Gemini (Google) - Multimodal, fast
-  - Claude (Anthropic) - Helpful, harmless, honest
-  - LLaMA (Meta) - Open-source, efficient
+  - Low-quality inputs: -1 point (⚠️) (single-word greetings like "hi", "hello", "hey")
+- **LLM Selection**: Choose from 5 simulated models (responses are mocked for demo)
+  - GPT (OpenAI) - General-purpose model simulation
+  - Grok (xAI) - Real-time knowledge simulation
+  - Gemini (Google) - Multimodal model simulation
+  - Claude (Anthropic) - Helpful assistant simulation
+  - LLaMA (Meta) - Open-source model simulation
 - **Auto-Select Mode**: AI automatically picks best model for your question
 - **Transparent Scoring**: View detailed points criteria
 - **Real-time Feedback**: See your score immediately after asking
 - **Accessibility**: Screen reader support and colorblind-friendly design
+
+**Note**: All LLM responses are currently simulated. The system is ready for real API integration in the future.
 
 ### Pricing (`/pricing`)
 - Free plan
@@ -225,18 +226,18 @@ The system evaluates questions based on multiple factors:
    - Proper question format (includes "?"): +1 point
 
 3. **Quality Penalties**
-   - Single-word greetings (hi, hello, hey): -1 to 0 points
-   - Off-topic questions: -5 to -2 points
+   - Single-word greetings (hi, hello, hey, test, ok, yes, no): -1 point
 
 ### Points Ranges
 
 | Category | Points | Description |
 |----------|--------|-------------|
-| 🌟 Interesting | 6-10 pts | Thought-provoking, well-structured questions |
+| 🌟 Interesting | 6-10 pts | Thought-provoking, well-structured questions with keywords |
 | ✨ Relevant | 3-5 pts | Clear, relevant questions with good structure |
 | Fair | 0-2 pts | Simple or basic questions |
-| ⚠️ Unclear | -2 to 0 pts | Poorly structured or unclear questions |
-| ⚠️ Irrelevant | -5 to -2 pts | Off-topic or low-quality questions |
+| ⚠️ Low Quality | -1 pt | Single-word greetings or test inputs |
+
+**Note**: Scoring is deterministic based on word count and keyword presence. The same question will always receive the same points.
 
 ### Tips for Earning More Points
 
