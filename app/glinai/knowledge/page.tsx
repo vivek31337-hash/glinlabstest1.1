@@ -149,6 +149,24 @@ export default function KnowledgeBase() {
       // Always normalize known low-quality patterns to the low-quality score range
       points = lowQualityPoints;
     }
+
+    // Detect potentially irrelevant or off-topic questions and map them into the
+    // "irrelevant" score band between MIN_POINTS and just below LOW_QUALITY_MIN.
+    const isPossiblyIrrelevant =
+      !hasSecurityKeyword &&
+      !hasTechKeyword &&
+      !question.includes('?') &&
+      wordCount < POINTS_CONFIG.WORD_COUNT_THRESHOLDS.SHORT;
+
+    if (
+      points === 0 &&
+      isPossiblyIrrelevant &&
+      POINTS_CONFIG.MIN_POINTS < POINTS_CONFIG.LOW_QUALITY_MIN
+    ) {
+      const irrelevantMax = POINTS_CONFIG.LOW_QUALITY_MIN - 1;
+      const range = irrelevantMax - POINTS_CONFIG.MIN_POINTS + 1;
+      points = Math.floor(Math.random() * range) + POINTS_CONFIG.MIN_POINTS;
+    }
     
     // Ensure points are within reasonable bounds
     points = Math.max(POINTS_CONFIG.MIN_POINTS, Math.min(POINTS_CONFIG.MAX_POINTS, points));
