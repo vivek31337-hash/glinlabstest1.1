@@ -1,0 +1,30 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield Icon with Circuit Pattern -->
+  <g id="shield-icon">
+    <!-- Shield outline -->
+    <path d="M20 5L12 8V15C12 21 16 26 20 28C24 26 28 21 28 15V8L20 5Z" fill="#2563EB" stroke="#1E40AF" stroke-width="1.5"/>
+    <!-- Circuit pattern inside shield -->
+    <circle cx="20" cy="14" r="2" fill="white"/>
+    <line x1="20" y1="16" x2="20" y2="20" stroke="white" stroke-width="1.5"/>
+    <circle cx="20" cy="22" r="1.5" fill="white"/>
+    <line x1="20" y1="14" x2="16" y2="18" stroke="white" stroke-width="1.5"/>
+    <line x1="20" y1="14" x2="24" y2="18" stroke="white" stroke-width="1.5"/>
+    <circle cx="16" cy="18" r="1.5" fill="white"/>
+    <circle cx="24" cy="18" r="1.5" fill="white"/>
+  </g>
+  
+  <!-- GLINLABS Text -->
+  <g id="text">
+    <text x="42" y="25" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1F2937">
+      GLIN
+    </text>
+    <text x="85" y="25" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2563EB">
+      LABS
+    </text>
+  </g>
+  
+  <!-- Tagline -->
+  <text x="42" y="33" font-family="Arial, sans-serif" font-size="8" fill="#6B7280">
+    AI-Powered Security
+  </text>
+</svg>
