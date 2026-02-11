@@ -22,8 +22,8 @@ const POINTS_CRITERIA = {
   relevant: { min: 3, max: 5, description: 'Relevant and well-structured questions' },
   interesting: { min: 6, max: 10, description: 'Interesting and thought-provoking questions' },
   simple: { min: 0, max: 2, description: 'Simple or basic questions' },
-  unclear: { min: -2, max: 0, description: 'Unclear or poorly structured questions' },
-  irrelevant: { min: -5, max: -2, description: 'Off-topic or irrelevant questions' },
+  unclear: { min: -1, max: 0, description: 'Unclear or poorly structured questions' },
+  irrelevant: { min: -1, max: 0, description: 'Off-topic or irrelevant questions' },
 };
 
 // Points calculation constants
