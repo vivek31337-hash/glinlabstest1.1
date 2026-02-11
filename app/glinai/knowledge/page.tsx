@@ -411,6 +411,7 @@ export default function KnowledgeBase() {
                           {msg.pointsEarned > 0 ? '+' : ''}{msg.pointsEarned} points{' '}
                           {msg.pointsEarned >= 7 && '(High) 🌟'}
                           {msg.pointsEarned >= 3 && msg.pointsEarned < 7 && '(Medium) ✨'}
+                          {msg.pointsEarned >= 0 && msg.pointsEarned < 3 && '(Basic)'}
                           {msg.pointsEarned < 0 && '(Low) ⚠️'}
                         </div>
                       )}
