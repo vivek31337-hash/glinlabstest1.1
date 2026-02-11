@@ -10,12 +10,14 @@ interface Message {
   model?: string;
 }
 
+// Simulated LLM models for scoring/demo purposes only.
+// In real integrations, some of these providers (e.g., OpenAI, Anthropic) may require paid API access.
 const LLM_MODELS = [
-  { id: 'gpt', name: 'GPT (OpenAI)', description: 'General-purpose, highly capable' },
-  { id: 'grok', name: 'Grok (xAI)', description: 'Real-time knowledge, witty' },
-  { id: 'gemini', name: 'Gemini (Google)', description: 'Multimodal, fast' },
-  { id: 'claude', name: 'Claude (Anthropic)', description: 'Helpful, harmless, honest' },
-  { id: 'llama', name: 'LLaMA (Meta)', description: 'Open-source, efficient' },
+  { id: 'gpt', name: 'GPT (OpenAI)', description: 'Simulated general-purpose model (real API may require paid access)' },
+  { id: 'grok', name: 'Grok (xAI)', description: 'Simulated real-time, witty model' },
+  { id: 'gemini', name: 'Gemini (Google)', description: 'Simulated multimodal, fast model' },
+  { id: 'claude', name: 'Claude (Anthropic)', description: 'Simulated helpful assistant (real API may require paid access)' },
+  { id: 'llama', name: 'LLaMA (Meta)', description: 'Simulated open-source, efficient model' },
 ];
 
 const POINTS_CRITERIA = {
