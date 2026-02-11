@@ -103,10 +103,8 @@ export default function KnowledgeBase() {
     if (/^(hi|hello|hey|test|ok|yes|no)$/i.test(question.trim())) {
       const range = POINTS_CONFIG.LOW_QUALITY_MAX - POINTS_CONFIG.LOW_QUALITY_MIN + 1;
       const lowQualityPoints = Math.floor(Math.random() * range) + POINTS_CONFIG.LOW_QUALITY_MIN;
-      // Only normalize to a low-quality score if the current score is already in the low-quality range
-      if (points <= POINTS_CONFIG.LOW_QUALITY_MAX) {
-        points = lowQualityPoints;
-      }
+      // Always normalize known low-quality patterns to the low-quality score range
+      points = lowQualityPoints;
     }
     
     // Ensure points are within reasonable bounds
