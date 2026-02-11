@@ -277,7 +277,7 @@ export default function KnowledgeBase() {
                     <div key={key} className="pb-2 border-b border-gray-100 last:border-0">
                       <div className="flex items-center justify-between">
                         <span className="font-medium capitalize text-gray-700">{key}</span>
-                        <span className={getPointsColor((criteria.min + criteria.max) / 2)}>
+                        <span className={getPointsColor(criteria.min)}>
                           {criteria.min} to {criteria.max} pts
                         </span>
                       </div>
