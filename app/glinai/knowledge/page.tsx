@@ -11,13 +11,14 @@ interface Message {
 }
 
 // Simulated LLM models for scoring/demo purposes only.
-// In real integrations, some of these providers (e.g., OpenAI, Anthropic) may require paid API access.
+// These entries do not represent live model integrations. Any real API use for the providers shown
+// (e.g., OpenAI, Anthropic, Google, xAI, Meta) may require paid access and is not implied to be free.
 const LLM_MODELS = [
-  { id: 'gpt', name: 'GPT (OpenAI)', description: 'Simulated general-purpose model (real API may require paid access)' },
-  { id: 'grok', name: 'Grok (xAI)', description: 'Simulated real-time, witty model' },
-  { id: 'gemini', name: 'Gemini (Google)', description: 'Simulated multimodal, fast model' },
-  { id: 'claude', name: 'Claude (Anthropic)', description: 'Simulated helpful assistant (real API may require paid access)' },
-  { id: 'llama', name: 'LLaMA (Meta)', description: 'Simulated open-source, efficient model' },
+  { id: 'gpt', name: 'GPT (OpenAI)', description: 'Simulated general-purpose model (real OpenAI API may require paid access)' },
+  { id: 'grok', name: 'Grok (xAI)', description: 'Simulated real-time, witty model (real xAI API may require paid access)' },
+  { id: 'gemini', name: 'Gemini (Google)', description: 'Simulated multimodal, fast model (real Google API may require paid access)' },
+  { id: 'claude', name: 'Claude (Anthropic)', description: 'Simulated helpful assistant (real Anthropic API may require paid access)' },
+  { id: 'llama', name: 'LLaMA (Meta)', description: 'Simulated open-source, efficient model (real Meta API may require paid access)' },
 ];
 
 const POINTS_CRITERIA = {
