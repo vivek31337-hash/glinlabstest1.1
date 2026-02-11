@@ -109,10 +109,13 @@ export default function KnowledgeBase() {
     
     // Check for security/tech-related keywords
     const securityKeywords = ['security', 'vulnerability', 'threat', 'attack', 'protection', 'encryption', 'cybersecurity', 'malware', 'phishing', 'firewall', 'authentication', 'authorization'];
-    const techKeywords = ['ai', 'machine learning', 'algorithm', 'code', 'programming', 'data', 'network', 'system', 'software', 'hardware'];
+    const techKeywords = ['machine learning', 'algorithm', 'code', 'programming', 'data', 'network', 'system', 'software', 'hardware'];
+    const aiWordRegex = /\bai\b/;
     
     const hasSecurityKeyword = securityKeywords.some(keyword => lowerQuestion.includes(keyword));
-    const hasTechKeyword = techKeywords.some(keyword => lowerQuestion.includes(keyword));
+    const hasTechKeyword =
+      aiWordRegex.test(lowerQuestion) ||
+      techKeywords.some(keyword => lowerQuestion.includes(keyword));
     
     // Calculate points based on various factors
     let points = 0;
