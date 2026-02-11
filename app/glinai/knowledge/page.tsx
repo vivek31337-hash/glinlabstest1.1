@@ -199,7 +199,11 @@ export default function KnowledgeBase() {
           <p className="text-xl text-gray-200 mb-2">Ask questions, earn points, and learn!</p>
           <div className="flex items-center justify-center gap-2 text-lg">
             <span className="text-gray-300">Total Points:</span>
-            <span className={`font-bold text-3xl ${getPointsColor(totalPoints)}`}>
+            <span
+              className={`font-bold text-3xl ${getPointsColor(totalPoints)}`}
+              aria-live="polite"
+              aria-atomic="true"
+            >
               {totalPoints}
               {totalPoints >= 7 && ' (Excellent)'}
               {totalPoints >= 3 && totalPoints < 7 && ' (Good)'}
