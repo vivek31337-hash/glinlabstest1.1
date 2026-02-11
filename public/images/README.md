@@ -1,0 +1,1 @@
+# Images Directory\n\nThis directory contains all static image assets for the GLINLABS platform.\n\n## Organization\n- Place logos in this folder\n- Add feature icons as needed\n- Keep images optimized for web

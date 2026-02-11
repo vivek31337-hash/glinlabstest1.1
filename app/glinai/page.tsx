@@ -11,11 +11,31 @@ export default function GlinAI() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [points, setPoints] = useState(100);
+  const [selectedLLM, setSelectedLLM] = useState('gpt-4');
+  const [securityQuestion, setSecurityQuestion] = useState('What is your primary security concern?');
+
+  const securityQuestions = [
+    'What is your primary security concern?',
+    'What type of threat are you investigating?',
+    'Which security domain interests you most?',
+    'What security framework do you follow?'
+  ];
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
+
+    // Deduct points
+    if (points > 0) {
+      setPoints(prev => Math.max(0, prev - 5));
+    }
+
+    // Rotate security question
+    const currentIndex = securityQuestions.indexOf(securityQuestion);
+    const nextIndex = (currentIndex + 1) % securityQuestions.length;
+    setSecurityQuestion(securityQuestions[nextIndex]);
 
     // Add user message
     const userMessage = input.trim();
@@ -44,7 +64,10 @@ export default function GlinAI() {
       {/* Hero */}
       <section className="min-h-[300px] flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">GlinAI</h1>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900">GlinAI</h1>
+            <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold rounded-full">BETA</span>
+          </div>
           <p className="text-xl text-gray-600">Your AI-powered security assistant</p>
           <p className="text-gray-500 mt-2">Powered by open-source security AI</p>
         </div>
@@ -52,6 +75,60 @@ export default function GlinAI() {
 
       {/* Chat Interface */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Points and Settings Bar */}
+        <div className="mb-4 flex flex-wrap gap-4 justify-between items-center bg-white p-4 rounded-lg shadow border border-gray-200">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">⭐</span>
+              <div>
+                <p className="text-sm text-gray-600">Points</p>
+                <p className="text-lg font-bold text-slate-900">{points}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🧠</span>
+              <div>
+                <p className="text-sm text-gray-600">AI Model</p>
+                <select 
+                  value={selectedLLM}
+                  onChange={(e) => setSelectedLLM(e.target.value)}
+                  className="text-sm font-semibold text-slate-900 border-none bg-transparent focus:outline-none cursor-pointer"
+                >
+                  <option value="gpt-4">GPT-4</option>
+                  <option value="claude-3">Claude 3</option>
+                  <option value="gemini-pro">Gemini Pro</option>
+                  <option value="llama-2">Llama 2</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          {/* Premium Features */}
+          <div className="flex gap-2">
+            <button className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 flex items-center gap-2 transition-colors relative group">
+              <span>🖼️</span>
+              <span className="hidden sm:inline">Image</span>
+              <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">PRO</span>
+            </button>
+            <button className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 flex items-center gap-2 transition-colors relative group">
+              <span>🎤</span>
+              <span className="hidden sm:inline">Voice</span>
+              <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">PRO</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Security Question */}
+        <div className="mb-4 bg-blue-50 border border-blue-200 p-3 rounded-lg">
+          <div className="flex items-start gap-2">
+            <span className="text-lg">🔒</span>
+            <div>
+              <p className="text-sm font-semibold text-blue-900">Security Check</p>
+              <p className="text-sm text-blue-700">{securityQuestion}</p>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col h-[600px]">
           
           {/* Messages Container */}
