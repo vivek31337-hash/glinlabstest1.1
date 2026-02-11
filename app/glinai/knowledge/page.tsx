@@ -21,16 +21,55 @@ const LLM_MODELS = [
   { id: 'llama', name: 'LLaMA (Meta)', description: 'Simulated open-source, efficient model (real Meta API may require paid access)' },
 ];
 
-const POINTS_CRITERIA = {
-  relevant: { min: 3, max: 5, description: 'Relevant and well-structured questions' },
-  interesting: { min: 6, max: 10, description: 'Interesting and thought-provoking questions' },
-  simple: { min: 0, max: 2, description: 'Simple or basic questions' },
-  unclear: { min: -1, max: 0, description: 'Unclear or poorly structured questions' },
-  irrelevant: { min: -1, max: 0, description: 'Off-topic or irrelevant questions' },
-};
-
 // Points calculation constants
 const POINTS_CONFIG = {
+  SHORT_QUESTION: { min: 0, max: 2 },
+  MEDIUM_QUESTION: { min: 2, max: 5 },
+  LONG_QUESTION: { min: 4, max: 8 },
+  VERY_LONG_QUESTION: { min: 5, max: 10 },
+  SECURITY_BONUS: 2,
+  TECH_BONUS: 1,
+  QUESTION_MARK_BONUS: 1,
+  LOW_QUALITY_MIN: -1,
+  LOW_QUALITY_MAX: 0,
+  WORD_COUNT_THRESHOLDS: {
+    SHORT: 3,
+    MEDIUM: 8,
+    LONG: 20,
+  },
+  MIN_POINTS: -5,
+  MAX_POINTS: 10,
+};
+
+const POINTS_CRITERIA = {
+  simple: {
+    min: POINTS_CONFIG.SHORT_QUESTION.min,
+    max: POINTS_CONFIG.SHORT_QUESTION.max,
+    description: 'Simple or basic questions',
+  },
+  relevant: {
+    min: POINTS_CONFIG.MEDIUM_QUESTION.min,
+    max: POINTS_CONFIG.MEDIUM_QUESTION.max,
+    description: 'Relevant and well-structured questions',
+  },
+  interesting: {
+    min: POINTS_CONFIG.VERY_LONG_QUESTION.min,
+    max: POINTS_CONFIG.MAX_POINTS,
+    description: 'Interesting and thought-provoking questions',
+  },
+  unclear: {
+    min: POINTS_CONFIG.LOW_QUALITY_MIN,
+    max: POINTS_CONFIG.LOW_QUALITY_MAX,
+    description: 'Unclear or poorly structured questions',
+  },
+  irrelevant: {
+    min: POINTS_CONFIG.MIN_POINTS,
+    max: POINTS_CONFIG.LOW_QUALITY_MAX,
+    description: 'Off-topic or irrelevant questions',
+  },
+};
+
+export default function KnowledgeBase() {
   SHORT_QUESTION: { min: 0, max: 2 },
   MEDIUM_QUESTION: { min: 2, max: 5 },
   LONG_QUESTION: { min: 4, max: 8 },
