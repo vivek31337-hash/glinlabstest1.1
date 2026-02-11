@@ -240,12 +240,17 @@ export default function KnowledgeBase() {
                 <button
                   onClick={() => setShowModelSelector(!showModelSelector)}
                   className="text-sm text-blue-600 hover:text-blue-700 underline"
+                  aria-expanded={showModelSelector}
+                  aria-controls="manual-model-selection-panel"
                 >
                   {showModelSelector ? 'Hide' : 'Show'} Manual Selection
                 </button>
                 
                 {showModelSelector && (
-                  <div className="space-y-2 mt-2 pl-2 border-l-2 border-gray-200">
+                  <div
+                    id="manual-model-selection-panel"
+                    className="space-y-2 mt-2 pl-2 border-l-2 border-gray-200"
+                  >
                     {LLM_MODELS.map((model) => (
                       <label key={model.id} className="flex items-start gap-2 cursor-pointer">
                         <input
