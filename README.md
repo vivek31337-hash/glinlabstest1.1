@@ -8,14 +8,16 @@ GLINLABS is a modern cybersecurity platform built with Next.js 14, offering secu
 
 ## Features
 
-- 🏠 **Home Page**: Hero section with feature overview
+- 🏠 **Home Page**: Hero section with prominent Glin AI access button
 - 🔐 **Services**: Security consulting, AI analysis, open-source tools
 - 📚 **Learn**: Educational security content hub
-- 🤖 **GlinAI**: Interactive AI chat interface (mocked)
+- 🤖 **GlinAI**: Interactive AI chat with points system and multi-LLM support
 - 💰 **Pricing**: Three-tier pricing model (Free, Pro, Enterprise)
 - 🔑 **Login**: Placeholder authentication UI
 - 📱 **Responsive Design**: Mobile-first approach with Tailwind CSS
 - ✨ **Modern UI**: Clean, startup-style interface
+- 🎯 **Points System**: Gamified learning experience with quality-based rewards
+- 🧠 **Multi-LLM**: Integration with 5 free LLMs with auto-selection
 
 ## Tech Stack
 
@@ -87,8 +89,9 @@ glinlabstest1/
 
 ### Home (`/`)
 - Hero section with "AI-Powered Security Intelligence for Everyone"
+- **Prominent Glin AI Button**: Center-placed, gradient-styled, animated call-to-action
 - Feature cards highlighting main services
-- CTA buttons: Get Started, Learn, GlinAI
+- Secondary CTA buttons: Get Started, Learn More
 - Responsive gradient background
 
 ### Services (`/services`)
@@ -103,10 +106,23 @@ glinlabstest1/
 - Coming soon announcement
 
 ### GlinAI (`/glinai`)
-- Interactive chat interface
-- Simulated AI responses
-- Message history
-- Powered by open-source security AI
+- **Knowledge-Based Chat System** with intelligent point rewards
+- **Points System**: Earn or lose points based on question quality
+  - Interesting questions: +10 to +15 points
+  - Normal questions: +5 points
+  - Low-quality questions: 0 to -5 points
+- **Multi-LLM Integration**: Support for 5 free LLMs
+  - GPT-3.5 Turbo 🤖
+  - Google Gemini ✨
+  - Claude 🧠
+  - LLaMA 2 🦙
+  - Mistral 🌬️
+- **Auto-Selection**: AI automatically selects the best model for your question
+- **Manual Selection**: Choose your preferred LLM from the dropdown
+- **Real-time Feedback**: Point changes displayed with context
+- **Premium Feature Placeholders**: Image upload and voice input (Coming Soon)
+- **Beta Version Badge**: Visible indicator of beta status
+- **Rotating Questions**: Background animation with interesting security questions
 
 ### Pricing (`/pricing`)
 - Free plan
