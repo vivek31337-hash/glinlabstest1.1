@@ -12,6 +12,7 @@ GLINLABS is a modern cybersecurity platform built with Next.js 14, offering secu
 - 🔐 **Services**: Security consulting, AI analysis, open-source tools
 - 📚 **Learn**: Educational security content hub
 - 🤖 **GlinAI**: Interactive AI chat interface (mocked)
+- 🧠 **Glin AI Knowledge Base**: AI-driven Q&A system with points and LLM selection (NEW!)
 - 💰 **Pricing**: Three-tier pricing model (Free, Pro, Enterprise)
 - 🔑 **Login**: Placeholder authentication UI
 - 📱 **Responsive Design**: Mobile-first approach with Tailwind CSS
@@ -70,6 +71,9 @@ glinlabstest1/
 │   ├── services/           # Services page
 │   ├── learn/              # Learning hub
 │   ├── glinai/             # AI chat interface
+│   │   ├── page.tsx        # Main GlinAI chat page
+│   │   └── knowledge/      # Knowledge Base system
+│   │       └── page.tsx    # Q&A with points & LLM selection
 │   ├── pricing/            # Pricing page
 │   └── login/              # Login page
 ├── components/
@@ -107,6 +111,26 @@ glinlabstest1/
 - Simulated AI responses
 - Message history
 - Powered by open-source security AI
+- Link to Knowledge Base system
+
+### Glin AI Knowledge Base (`/glinai/knowledge`) - NEW!
+- **Ask Questions**: Text-based Q&A interface
+- **Earn Points**: Get points for quality questions
+  - Interesting questions: 6-10 points (🌟)
+  - Relevant questions: 3-5 points (✨)
+  - Simple questions: 0-2 points
+  - Unclear questions: -2 to 0 points (⚠️)
+  - Irrelevant questions: -5 to -2 points (⚠️)
+- **LLM Selection**: Choose from 5 top free models
+  - GPT (OpenAI) - General-purpose, highly capable
+  - Grok (xAI) - Real-time knowledge, witty
+  - Gemini (Google) - Multimodal, fast
+  - Claude (Anthropic) - Helpful, harmless, honest
+  - LLaMA (Meta) - Open-source, efficient
+- **Auto-Select Mode**: AI automatically picks best model for your question
+- **Transparent Scoring**: View detailed points criteria
+- **Real-time Feedback**: See your score immediately after asking
+- **Accessibility**: Screen reader support and colorblind-friendly design
 
 ### Pricing (`/pricing`)
 - Free plan
@@ -174,11 +198,53 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 - [ ] Database integration (PostgreSQL/MongoDB)
 - [ ] User authentication (NextAuth.js)
 - [ ] Stripe payment integration
-- [ ] GlinAI backend API
+- [ ] Real LLM API integration (OpenAI, Google AI, etc.)
 - [ ] Blog/CMS functionality
 - [ ] Analytics integration
 - [ ] Email newsletter signup
 - [ ] Support chat system
+- [ ] Persistent points storage across sessions
+
+## Glin AI Knowledge Base - Points System
+
+The Knowledge Base uses an intelligent points system to encourage quality questions:
+
+### How Points Are Calculated
+
+The system evaluates questions based on multiple factors:
+
+1. **Question Length & Structure**
+   - Very short questions (< 3 words): 0-2 points
+   - Medium questions (3-7 words): 2-5 points
+   - Long questions (8-19 words): 4-8 points
+   - Very long questions (20+ words): 5-10 points
+
+2. **Keyword Bonuses**
+   - Security-related keywords: +2 points
+   - Technology-related keywords: +1 point
+   - Proper question format (includes "?"): +1 point
+
+3. **Quality Penalties**
+   - Single-word greetings (hi, hello, hey): -1 to 0 points
+   - Off-topic questions: -5 to -2 points
+
+### Points Ranges
+
+| Category | Points | Description |
+|----------|--------|-------------|
+| 🌟 Interesting | 6-10 pts | Thought-provoking, well-structured questions |
+| ✨ Relevant | 3-5 pts | Clear, relevant questions with good structure |
+| Fair | 0-2 pts | Simple or basic questions |
+| ⚠️ Unclear | -2 to 0 pts | Poorly structured or unclear questions |
+| ⚠️ Irrelevant | -5 to -2 pts | Off-topic or low-quality questions |
+
+### Tips for Earning More Points
+
+- Ask specific, detailed questions
+- Include context and relevant keywords
+- Focus on security and technology topics
+- Use proper grammar and question marks
+- Avoid one-word or greeting messages
 
 ## Performance
 
