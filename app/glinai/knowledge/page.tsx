@@ -279,13 +279,15 @@ export default function KnowledgeBase() {
                 <button
                   onClick={() => setShowPointsCriteria(!showPointsCriteria)}
                   className="text-xs text-blue-600 hover:text-blue-700"
+                  aria-expanded={showPointsCriteria}
+                  aria-controls="points-criteria-content"
                 >
                   {showPointsCriteria ? 'Hide' : 'Show'}
                 </button>
               </div>
               
               {showPointsCriteria && (
-                <div className="space-y-2 text-sm">
+                <div id="points-criteria-content" className="space-y-2 text-sm">
                   {Object.entries(POINTS_CRITERIA).map(([key, criteria]) => (
                     <div key={key} className="pb-2 border-b border-gray-100 last:border-0">
                       <div className="flex items-center justify-between">
